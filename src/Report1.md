@@ -1,4 +1,4 @@
-# Finite Automata and Regular Grammars
+
 
 ## Course: Formal Languages & Finite Automata
 
