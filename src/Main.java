@@ -114,7 +114,7 @@ public class Main {
         FiniteAutomaton fa = grammar.convertToFA();
 
         System.out.println("\nTesting :");
-        List<String> testStrings = Arrays.asList("ade", "aE", "aec", "abJ", "acd");
+        List<String> testStrings = Arrays.asList("ade", "aaaaaaae", "aec", "abcade", "acd");
         for (String str : testStrings) {
             System.out.println("String: " + str + " - Accepted: " + fa.accepts(str));
         }
