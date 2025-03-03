@@ -257,4 +257,3 @@ public static void visualizeAutomaton(FiniteAutomaton fa, String title) {
 - ![NFA graph](result2.png)
 - ![NFA to DFA conversion](result3.png)
 - ![DFA graph](result4.png)
-
