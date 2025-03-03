@@ -64,6 +64,70 @@ class Grammar {
 
         return new FiniteAutomaton(states, terminals, transitions, initialState, acceptStates);
     }
+
+    public String classifyChomskyHierarchy() {
+        boolean isRegular = true;
+        boolean isContextFree = true;
+        boolean isContextSensitive = true;
+
+        for (Map.Entry<Character, List<String>> entry : rules.entrySet()) {
+            char leftSide = entry.getKey();
+
+            for (String rightSide : entry.getValue()) {
+                if (rightSide.isEmpty()) {
+                    return "Type-0 (Unrestricted Grammar)";
+                }
+
+                if (rightSide.length() > leftSide) {
+                    isRegular = false;
+                }
+
+                if (!nonTerminals.contains(leftSide)) {
+                    return "Invalid Grammar (Left side must be a non-terminal)";
+                }
+
+                if (rightSide.length() < leftSide) {
+                    isContextSensitive = false;
+                }
+
+                boolean isRightLinear = true;
+                boolean isLeftLinear = true;
+                boolean hasNonTerminal = false;
+
+                for (int i = 0; i < rightSide.length(); i++) {
+                    char ch = rightSide.charAt(i);
+                    if (nonTerminals.contains(ch)) {
+                        hasNonTerminal = true;
+                        if (i != rightSide.length() - 1) {
+                            isRightLinear = false;
+                        }
+                        if (i != 0) {
+                            isLeftLinear = false;
+                        }
+                    } else if (!terminals.contains(ch)) {
+                        return "Invalid Grammar (Right side contains unknown symbols)";
+                    }
+                }
+
+                if (hasNonTerminal && (!isRightLinear && !isLeftLinear)) {
+                    isRegular = false;
+                }
+
+                if (rightSide.length() > 1 && hasNonTerminal) {
+                    isContextFree = false;
+                }
+            }
+        }
+
+        if (isRegular) {
+            return "Type-3 (Regular Grammar)";
+        } else if (isContextFree) {
+            return "Type-2 (Context-Free Grammar)";
+        } else if (isContextSensitive) {
+            return "Type-1 (Context-Sensitive Grammar)";
+        }
+        return "Type-0 (Unrestricted Grammar)";
+    }
 }
 
 class FiniteAutomaton {
@@ -110,7 +174,7 @@ public class Main {
         for (String str : generatedStrings) {
             System.out.println(str);
         }
-
+        System.out.print(grammar.classifyChomskyHierarchy());
         FiniteAutomaton fa = grammar.convertToFA();
 
         System.out.println("\nTesting :");
