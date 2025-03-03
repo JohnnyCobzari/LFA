@@ -41,59 +41,40 @@ Regular languages, corresponding to Type 3 grammars in the Chomsky hierarchy, ar
 
    d. Represent the finite automaton graphically (Optional, and can be considered as a **_bonus point_**):
 
-    - You can use external libraries, tools or APIs to generate the figures/diagrams.
-    - Your program needs to gather and send the data about the automaton and the lib/tool/API return the visual representation.
+   - You can use external libraries, tools or APIs to generate the figures/diagrams.
+   - Your program needs to gather and send the data about the automaton and the lib/tool/API return the visual representation.
 
 ## **1. Chomsky Hierarchy Classification**
 
 Below is a function that classifies a grammar into the Chomsky hierarchy, with added **inline comments** to clarify each step:
-
+The `classifyChomskyHierarchy` function analyzes a set of grammar production rules and classifies the grammar into one of the four Chomsky hierarchy types. It assumes the grammar is initially regular, context-free, and context-sensitive, then iterates through each rule to check for constraints. If a rule violates the conditions for regularity, context-freeness, or context-sensitivity, the respective flag is set to false. The function then returns the most specific classification based on the constraints met.
 ```java
 public String classifyChomskyHierarchy() {
-    // We start by assuming it's regular, context-free, and context-sensitive
-    boolean isRegular = true, isContextFree = true, isContextSensitive = true;
-
-    // Iterate over all production rules
-    for (var entry : rules.entrySet()) {
-        char lhs = entry.getKey(); // The left-hand side (LHS)
-        for (String rhs : entry.getValue()) { // Each right-hand side (RHS)
-
-            // If the RHS is empty, the grammar can generate empty => Type-0
-            if (rhs.isEmpty()) return "Type-0 (Unrestricted)";
-
-            // If RHS is longer than LHS, it might not be strictly regular
-            if (rhs.length() > lhs) isRegular = false;
-
-            // The LHS must be a valid non-terminal
-            if (!nonTerminals.contains(lhs)) return "Invalid Grammar";
-
-            // For context-sensitive grammars, check if |LHS| <= |RHS|
-            if (rhs.length() < lhs) isContextSensitive = false;
-
-            // Check whether the production is right-linear or left-linear
-            boolean isRightLinear = rhs.matches(".*[A-Z]$");
-            boolean isLeftLinear = rhs.matches("^[A-Z].*");
-
-            // If there's a non-terminal in the middle, it's not purely linear => not Type-3
-            if (rhs.chars().anyMatch(ch -> nonTerminals.contains((char) ch)) && (!isRightLinear && !isLeftLinear)) {
-                isRegular = false;
-            }
-
-            // If the RHS has multiple symbols including a non-terminal => might not be Type-2
-            if (rhs.length() > 1 && rhs.chars().anyMatch(ch -> nonTerminals.contains((char) ch))) {
-                isContextFree = false;
-            }
-        }
-    }
-
-    // Final classification based on flags
-    return isRegular
-        ? "Type-3 (Regular)"
-        : isContextFree
-            ? "Type-2 (Context-Free)"
-            : isContextSensitive
-                ? "Type-1 (Context-Sensitive)"
-                : "Type-0 (Unrestricted)";
+   for (var entry : rules.entrySet()) {
+      char lhs = entry.getKey(); // The left-hand side (LHS)
+      for (String rhs : entry.getValue()) { // Each right-hand side (RHS)
+         // If the RHS is empty, the grammar can generate empty => Type-0
+         if (rhs.isEmpty()) return "Type-0 (Unrestricted)";
+         // If RHS is longer than LHS, it might not be strictly regular
+         if (rhs.length() > lhs) isRegular = false;
+         // The LHS must be a valid non-terminal
+         if (!nonTerminals.contains(lhs)) return "Invalid Grammar";
+         // For context-sensitive grammars, check if |LHS| <= |RHS|
+         if (rhs.length() < lhs) isContextSensitive = false;
+         boolean isRightLinear = rhs.matches(".*[A-Z]$");
+         boolean isLeftLinear = rhs.matches("^[A-Z].*");
+        if (rhs.chars().anyMatch(ch -> nonTerminals.contains((char) ch)) && (!isRightLinear && !isLeftLinear)) {
+            isRegular = false;
+         }
+         if (rhs.length() > 1 && rhs.chars().anyMatch(ch -> nonTerminals.contains((char) ch))) {
+            isContextFree = false;}}}
+   return isRegular
+           ? "Type-3 (Regular)"
+           : isContextFree
+           ? "Type-2 (Context-Free)"
+           : isContextSensitive
+           ? "Type-1 (Context-Sensitive)"
+           : "Type-0 (Unrestricted)";
 }
 ```
 
@@ -108,24 +89,24 @@ public String classifyChomskyHierarchy() {
 ## **2. Finite Automaton to Regular Grammar**
 
 Below is how to convert an FA into a regular grammar, with **inline comments** on essential steps:
-
+The convertToRegularGrammar function converts a finite automaton (FA) into a regular grammar. It maps FA states to non-terminals and transitions to production rules. Each transition (state, input) → nextState becomes a grammar rule state → input nextState. For final states, it adds an epsilon (ε) production to indicate acceptance
 ```java
 public static Map<Character, List<String>> convertToRegularGrammar(FiniteAutomaton fa) {
-    // Initialize the grammar map, where each FA state is a non-terminal
-    Map<Character, List<String>> grammar = new HashMap<>();
-    fa.states.forEach(state -> grammar.put(state, new ArrayList<>()));
+   // Initialize the grammar map, where each FA state is a non-terminal
+   Map<Character, List<String>> grammar = new HashMap<>();
+   fa.states.forEach(state -> grammar.put(state, new ArrayList<>()));
 
-    // For each state, examine its transitions and form productions
-    fa.transitions.forEach((state, trans) ->
-        trans.forEach((input, nextStates) ->
-            nextStates.forEach(next -> grammar.get(state).add(input + " " + next))
-        )
-    );
+   // For each state, examine its transitions and form productions
+   fa.transitions.forEach((state, trans) ->
+           trans.forEach((input, nextStates) ->
+                   nextStates.forEach(next -> grammar.get(state).add(input + " " + next))
+           )
+   );
 
-    // For final states, add epsilon (ε) productions to signify acceptance
-    fa.finalStates.forEach(finalState -> grammar.get(finalState).add("ε"));
+   // For final states, add epsilon (ε) productions to signify acceptance
+   fa.finalStates.forEach(finalState -> grammar.get(finalState).add("ε"));
 
-    return grammar;
+   return grammar;
 }
 ```
 
@@ -140,12 +121,16 @@ public static Map<Character, List<String>> convertToRegularGrammar(FiniteAutomat
 ## **3. Checking If an FA Is Deterministic**
 
 This snippet determines if the finite automaton is a DFA (only one next state per symbol) or an NFA:
+The `isDeterministic` function verifies whether a given finite automaton (FA) adheres to deterministic behavior. In a deterministic finite automaton (DFA), each state must have exactly one transition for every possible input symbol.
 
+This function iterates through all the transitions in the automaton, ensuring that no input symbol maps to multiple possible next states. If any transition for a given symbol leads to more than one next state, the function determines that the FA is nondeterministic.
+
+By using Java streams, the function efficiently checks all transition mappings and returns `true` if the FA is deterministic, otherwise `false`. This ensures a quick assessment of whether the given FA conforms to the strict rules of a DFA or exhibits nondeterministic behavior.
 ```java
 public static boolean isDeterministic(FiniteAutomaton fa) {
-    // If any transition on a single symbol leads to multiple states, it's nondeterministic
-    return fa.transitions.values().stream()
-        .allMatch(trans -> trans.values().stream().allMatch(next -> next.size() == 1));
+   // If any transition on a single symbol leads to multiple states, it's nondeterministic
+   return fa.transitions.values().stream()
+           .allMatch(trans -> trans.values().stream().allMatch(next -> next.size() == 1));
 }
 ```
 
@@ -157,42 +142,30 @@ public static boolean isDeterministic(FiniteAutomaton fa) {
 
 ## **4. Converting NDFA to DFA** *(Subset Construction)*
 
-The following snippet shows how to convert an NFA to a DFA using the subset/powerset construction:
+The `convertToDFA` function transforms a nondeterministic finite automaton (NDFA) into a deterministic finite automaton (DFA) using the **subset construction method**. It systematically replaces sets of NDFA states with single DFA states, ensuring deterministic behavior.
 
+The function processes the NDFA states iteratively:
+1. **Iterate through each subset of states**: The function dequeues a set of NDFA states and examines possible transitions.
+2. **Determine next states**: For each input symbol, the function calculates the set of reachable states, including ε-closures.
+3. **Track new states**: If a newly formed state subset has not been encountered before, it is added to the DFA's state set and queued for processing.
+4. **Store transitions**: The DFA transitions are recorded as each subset is processed.
+
+Once all possible subsets have been explored and recorded, the function builds and returns a DFA that accurately represents the language of the original NDFA but in a deterministic manner.
 ```java
 public static FiniteAutomatonStringVersion convertToDFA(FiniteAutomaton ndfa) {
-    // We'll track sets of NFA states as single DFA states
-    Set<Set<Character>> dfaStates = new HashSet<>();
-    Queue<Set<Character>> queue = new LinkedList<>();
-
-    // The start subset is the epsilon closure of the NDFA's start state
-    Set<Character> startSubset = epsilonClosure(ndfa, Set.of(ndfa.startState));
-    dfaStates.add(startSubset);
-    queue.add(startSubset);
-
-    // Prepare a structure to hold transitions for the DFA
-    Map<Set<Character>, Map<Character, Set<Character>>> dfaTransitions = new HashMap<>();
-
-    // Explore each subset in BFS manner
     while (!queue.isEmpty()) {
-        Set<Character> currentSubset = queue.poll();
-        // For each input symbol, gather all possible next states
-        for (char input : ndfa.alphabet) {
-            Set<Character> nextSubset = epsilonClosure(ndfa, getNextStates(ndfa, currentSubset, input));
-
-            // If this subset of states is new, add it to our queue
-            if (!nextSubset.isEmpty() && dfaStates.add(nextSubset)) {
-                queue.add(nextSubset);
-            }
-
-            // Record the transition in the new DFA structure
-            dfaTransitions.computeIfAbsent(currentSubset, k -> new HashMap<>())
-                          .put(input, nextSubset);
-        }
-    }
-
-    // Convert subsets and transitions into a proper FiniteAutomatonStringVersion
-    return buildDFA(ndfa, dfaStates, dfaTransitions, startSubset);
+      Set<Character> currentSubset = queue.poll();
+      // For each input symbol, gather all possible next states
+      for (char input : ndfa.alphabet) {
+         Set<Character> nextSubset = epsilonClosure(ndfa, getNextStates(ndfa, currentSubset, input));
+        if (!nextSubset.isEmpty() && dfaStates.add(nextSubset)) {
+            queue.add(nextSubset);
+         }
+         dfaTransitions.computeIfAbsent(currentSubset, k -> new HashMap<>())
+                 .put(input, nextSubset);
+      }
+   }
+  return buildDFA(ndfa, dfaStates, dfaTransitions, startSubset);
 }
 ```
 
@@ -206,32 +179,19 @@ public static FiniteAutomatonStringVersion convertToDFA(FiniteAutomaton ndfa) {
 
 ## **5. Graphical Representation of FA** *(Optional / Bonus)*
 
-Below is a simple approach to visualize the automaton using the GraphStream library:
-
+The `visualizeAutomaton` function generates a graphical representation of a finite automaton using **GraphStream**. It adds each state as a node in the graph and labels it accordingly. Then, it processes the transitions, adding directed edges between states and labeling them with the corresponding input symbols. Finally, the function displays the constructed graph visually. This approach provides an intuitive way to understand the structure and behavior of a finite automaton.
 ```java
 public static void visualizeAutomaton(FiniteAutomaton fa, String title) {
-    // Create a new directed graph
-    Graph graph = new SingleGraph(title);
-
-    // Add each FA state as a node, labeling it with the state name
-    fa.states.forEach(state ->
-        graph.addNode(String.valueOf(state)).setAttribute("ui.label", state)
-    );
-
-    // For each transition, draw a labeled edge
-    fa.transitions.forEach((from, trans) ->
-        trans.forEach((input, nextStates) ->
-            nextStates.forEach(to ->
-                graph.addEdge(from + "-" + input + "-" + to,
-                              String.valueOf(from),
-                              String.valueOf(to), true)
-                    .setAttribute("ui.label", input)
-            )
-        )
-    );
-
-    // Display the graph in a window
-    graph.display();
+fa.states.forEach(state ->
+           graph.addNode(String.valueOf(state)).setAttribute("ui.label", state)
+   );
+fa.transitions.forEach((from, trans) ->
+           trans.forEach((input, nextStates) ->
+                   nextStates.forEach(to ->
+                           graph.addEdge(from + "-" + input + "-" + to,
+                                           String.valueOf(from),
+                                           String.valueOf(to), true)
+                                   .setAttribute("ui.label", input))));
 }
 ```
 
