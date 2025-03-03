@@ -253,7 +253,7 @@ public static void visualizeAutomaton(FiniteAutomaton fa, String title) {
 **Overall, these steps confirm the underlying theory that regular languages can be expressed in multiple forms: (1) as regular grammars and (2) via deterministic finite automata. Converting from an NFA to a DFA guarantees a deterministic representation, showcasing that nondeterminism does not add expressive power to regular languages. This solidifies the foundational principle in formal language theory that DFAs, NFAs, and regular grammars are equally powerful in describing regular languages.**
 
 ### **Screenshots:**
-- ![FA to Regular Grammar conversion](Result1.png)
+- ![FA to Regular Grammar conversion](result1.png)
 - ![NFA graph](result2.png)
 - ![NFA to DFA conversion](result3.png)
 - ![DFA graph](result4.png)
