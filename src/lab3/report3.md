@@ -156,7 +156,6 @@ private boolean matchBoolean(List<Token> tokens) {
 
 #### 5. **`matchNull` Method**
 
-### Short Paragraph Description
 
 The `matchNull` method identifies and tokenizes the `null` value in the input JSON string. It uses a regex pattern (`"null"`) to match the literal `null` at the current position in the input. If a match is found, it creates a `Token` of type `NULL`, adds it to the token list, and updates the position to continue processing. This method ensures that `null` values are correctly recognized and tokenized during lexical analysis.
 ```java
