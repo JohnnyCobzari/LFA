@@ -6,7 +6,7 @@ import java.util.regex.*;
 public class JsonLexer {
     public enum TokenType {
         LEFT_BRACE, RIGHT_BRACE, LEFT_BRACKET, RIGHT_BRACKET, COLON, COMMA,
-        STRING, NUMBER, BOOLEAN, NULL, UNKNOWN_STRING, UNKNOWN
+        STRING, NUMBER, BOOLEAN, NULL, UNKNOWN_STRING
     }
 
     public static class Token {

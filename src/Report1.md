@@ -135,8 +135,8 @@ class FiniteAutomaton {
 }
 ```
 ## Outputs
-![The outputs of the generated strings](img.png)
-![The output of how finite Automaton check results](img_1.png)
+![The outputs of the generated strings](lab1/img.png)
+![The output of how finite Automaton check results](lab1/img_1.png)
 
 ## Conclusions
 
