@@ -222,6 +222,6 @@ public class RegexGenerator {
                 "(H|i)(J|K)L*N?"
         );
 
-        List<String> validStrings = generator.generate(patterns, 3);
+       generator.generate(patterns, 3);
     }
 }
