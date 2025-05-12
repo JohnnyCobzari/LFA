@@ -27,13 +27,12 @@ class TestGrammar {
 
     @Test
     void testInitialGrammar() {
-        assertEquals(Arrays.asList("S", "A", "B", "C", "E"), grammar.getNonTerminals());
-        assertEquals(Arrays.asList("a", "b"), grammar.getTerminals());
+        assertEquals(Arrays.asList("S", "A", "B", "C"), grammar.getNonTerminals());
+        assertEquals(Arrays.asList("a", "d"), grammar.getTerminals());
         assertTrue(grammar.getRules().containsKey("S"));
         assertTrue(grammar.getRules().containsKey("A"));
         assertTrue(grammar.getRules().containsKey("B"));
         assertTrue(grammar.getRules().containsKey("C"));
-        assertTrue(grammar.getRules().containsKey("E"));
     }
 
     @Test

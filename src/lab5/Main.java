@@ -4,14 +4,14 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
-        List<String> nonTerminals = Arrays.asList("S", "A", "B", "C");
-        List<String> terminals = Arrays.asList("a", "d");
+        List<String> nonTerminals = Arrays.asList("S", "A", "B");
+        List<String> terminals = Arrays.asList("a", "b");
 
         Map<String, List<String>> rules = new HashMap<>();
-        rules.put("S", Arrays.asList("dB", "A"));
-        rules.put("A", Arrays.asList("d", "dS", "aAdAB"));
-        rules.put("B", Arrays.asList("a", "aS","A","ε"));
-        rules.put("C", Arrays.asList("Aa"));
+        rules.put("S", Arrays.asList("aB", "baA"));
+        rules.put("A", Arrays.asList("bAaB", "aS", "a"));
+        rules.put("B", Arrays.asList("A", "BS","ε"));
+
 
         Grammar grammar = new Grammar(nonTerminals, terminals, rules, "S");
 
